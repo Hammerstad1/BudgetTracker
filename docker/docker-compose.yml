@@ -1,0 +1,89 @@
+version: "3.9"
+
+services:
+  rabbitmq-dev:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - micro_card
+
+  consul-dev:
+    image: hashicorp/consul:1.19.2
+    container_name: consul
+    ports:
+      - '8500:8500'
+    command: 'agent -dev -node=cards -client=0.0.0.0 -log-level=INFO'
+    networks:
+      - micro_card
+
+#  consul-importer:
+#    image: consul-importer:1.19.2
+#    depends_on:
+#      - consul-dev
+#    networks:
+#      - micro_card
+
+  db:
+    image: postgres:16
+    container_name: budget-db
+    environment:
+      POSTGRES_DB: BudgetTracker
+      POSTGRES_USER: BudgetTracker
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d budget"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - micro_card
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: budget-api
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq-dev:
+        condition: service_healthy
+      consul-dev:
+        condition: service_healthy
+    environment:
+      PORT: 8080
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: budget
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+      CONSUl_HOST: consul
+      CONSUL_PORT: 8500
+    ports:
+      - "8080:8080"
+    networks:
+      - micro_card
+
+networks:
+  micro_card:
+    driver: bridge
+
+volumes:
+  pgdata:
+
