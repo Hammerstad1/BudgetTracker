@@ -1,16 +1,16 @@
 server:
-  port: ${:8080}
+  port: ${PORT:8080}
 
 spring:
   cloud:
     gateway:
       routes:
         - id: catalog
-          uri: ${CATALOG-URL}
+          uri: ${CATALOG_URL:http://localhost:9001}
           predicates: [Path=/api/catalog/** ]
         - id: basket
-          uri: ${BASKET-URL}
+          uri: ${BASKET_URL:http://localhost:9002}
           predicates: [ Path=/api/basket/** ]
         - id: pricing
-          uri: ${PRICING-URL}
+          uri: ${PRICING_URL:http://localhost:9003}
           predicates: [ Path=/api/pricing/** ]
