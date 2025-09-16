@@ -4,11 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build:web": "vite build",
-    "build:server": "tsc -p tsconfig.server.json",
-    "build": "npm run build:web && npm run build:server",
-    "start": "node dist-server/server.js",
-    "heroku-postbuild": "npm run build"
+   "build": "vite build"
   },
   "engines": { "node": ">=18 <23" },
 
