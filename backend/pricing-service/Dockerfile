@@ -1,0 +1,14 @@
+FROM maven:3.9-eclipse-temurin-21 AS build
+WORKDIR /app
+COPY backend/pricing-service/pom.xml .
+RUN mvn -B -e -DskipTests dependency:go-offline
+COPY backend/pricing-service/src ./src
+RUN mvn -q -Dmaven.test.skip=true package
+
+FROM eclipse-temurin:21-jre
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+ENV PORT=9003
+EXPOSE 9003
+WORKDIR /app
+COPY --from=build /app/target/*-SNAPSHOT.jar app.jar
+ENTRYPOINT ["sh","-c", "java -Dserver.port=${PORT} -jar /app/app.jar"]
