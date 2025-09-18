@@ -1,0 +1,46 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      routes:
+        - id: catalog
+          uri: http://catalog:9001
+          predicates:
+            - Path=/api/catalog/**
+          filters:
+            - StripPrefix=2
+        - id: basket
+          uri: http://basket:9002
+          predicates:
+            - Path=/api/basket/**
+          filters:
+            - StripPrefix=2
+        - id: pricing
+          uri: http://pricing:9003
+          predicates:
+            - Path=/api/pricing/**
+          filters:
+            - StripPrefix=2
+        - id: budget
+          uri: http://budget:9004
+          predicates:
+            - Path=/api/budget/**
+          filters:
+            - StripPrefix=2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    gateway:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
