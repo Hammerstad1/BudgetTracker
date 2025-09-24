@@ -28,12 +28,12 @@ services:
     networks:
       - micro_card
 
-#  consul-importer:
-#    image: consul-importer:1.19.2
-#    depends_on:
-#      - consul-dev
-#    networks:
-#      - micro_card
+  #  consul-importer:
+  #    image: consul-importer:1.19.2
+  #    depends_on:
+  #      - consul-dev
+  #    networks:
+  #      - micro_card
 
   db:
     image: postgres:16
@@ -54,11 +54,10 @@ services:
     networks:
       - micro_card
 
-
   catalog:
     build:
-      context: ..
-      dockerfile: backend/catalog-service/Dockerfile
+      context: ../backend/catalog-service
+      dockerfile: Dockerfile
     environment:
       PORT: 9001
       # SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget
@@ -82,8 +81,8 @@ services:
 
   basket:
     build:
-      context: ..
-      dockerfile: backend/basket-service/Dockerfile
+      context: ../backend/basket-service
+      dockerfile: Dockerfile
     environment:
       PORT: 9002
       # SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget
@@ -107,8 +106,8 @@ services:
 
   pricing:
     build:
-      context: ..
-      dockerfile: backend/pricing-service/Dockerfile
+      context: ../backend/pricing-service
+      dockerfile: Dockerfile
     environment:
       PORT: 9003
       # SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget
@@ -132,8 +131,8 @@ services:
 
   budget:
     build:
-      context: ..
-      dockerfile: backend/budget-service/Dockerfile
+      context: ../backend/budget-service
+      dockerfile: Dockerfile
     environment:
       PORT: 9004
       # SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget
@@ -157,8 +156,8 @@ services:
 
   gateway:
     build:
-      context: ..
-      dockerfile: backend/gateway-service/Dockerfile
+      context: ../backend/gateway-service
+      dockerfile: Dockerfile
     environment:
       PORT: 8080
       CATALOG_URL: http://catalog:9001
@@ -186,4 +185,3 @@ networks:
 
 volumes:
   pgdata:
-

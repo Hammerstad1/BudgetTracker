@@ -8,25 +8,25 @@ spring:
     gateway:
       routes:
         - id: catalog
-          uri: http://catalog:9001
+          uri: ${CATALOG_URL:http://localhost:9001}
           predicates:
             - Path=/api/catalog/**
           filters:
             - StripPrefix=2
         - id: basket
-          uri: http://basket:9002
+          uri: ${BASKET_URL:http://localhost:9002}
           predicates:
             - Path=/api/basket/**
           filters:
             - StripPrefix=2
         - id: pricing
-          uri: http://pricing:9003
+          uri: ${PRICING_URL:http://localhost:9003}
           predicates:
             - Path=/api/pricing/**
           filters:
             - StripPrefix=2
         - id: budget
-          uri: http://budget:9004
+          uri: ${BUDGET_URL:http://localhost:9004}
           predicates:
             - Path=/api/budget/**
           filters:
