@@ -8,11 +8,17 @@ export default defineConfig({
         checker({ typescript: true }),
     ],
     server: {
+        host: true,
+        port: 5173,
+        strictPort: true,
+        open: true,
+        watch: { usePolling: true , interval: 100 },
+        hmr: { clientPort: 5173 },
+
         proxy: {
             '/api': {
                 target: 'http://localhost:8080',
                 changeOrigin: true,
-                secure: false,
             }
         }
     }

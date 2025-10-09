@@ -37,15 +37,15 @@ services:
 
   db:
     image: postgres:16
-    container_name: budget-db
     environment:
-      POSTGRES_DB: budget
+      POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -60,13 +60,12 @@ services:
       dockerfile: Dockerfile
     environment:
       PORT: 9001
-      # SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget
-      # SPRING_DATASOURCE_USERNAME: postgres
-      # SPRING_DATASOURCE_PASSWORD: postgres
-      # RABBITMQ_HOST: rabbitmq
-      # RABBITMQ_PORT: 5672
-      # CONSUL_HOST: consul
-      # CONSUL_PORT 8500
+      SPRING_APPLICATION_NAME: catalog-service
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/catalog_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
     depends_on:
       db: { condition: service_healthy }
       rabbitmq-dev: { condition: service_healthy}
@@ -85,13 +84,12 @@ services:
       dockerfile: Dockerfile
     environment:
       PORT: 9002
-      # SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget
-      # SPRING_DATASOURCE_USERNAME: postgres
-      # SPRING_DATASOURCE_PASSWORD: postgres
-      # RABBITMQ_HOST: rabbitmq
-      # RABBITMQ_PORT: 5672
-      # CONSUL_HOST: consul
-      # CONSUL_PORT 8500
+      SPRING_APPLICATION_NAME: basket-service
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/basket_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
     depends_on:
       db: { condition: service_healthy }
       rabbitmq-dev: { condition: service_healthy }
@@ -110,13 +108,12 @@ services:
       dockerfile: Dockerfile
     environment:
       PORT: 9003
-      # SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget
-      # SPRING_DATASOURCE_USERNAME: postgres
-      # SPRING_DATASOURCE_PASSWORD: postgres
-      # RABBITMQ_HOST: rabbitmq
-      # RABBITMQ_PORT: 5672
-      # CONSUL_HOST: consul
-      # CONSUL_PORT 8500
+      SPRING_APPLICATION_NAME: pricing-service
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/pricing_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
     depends_on:
       db: { condition: service_healthy }
       rabbitmq-dev: { condition: service_healthy }
@@ -135,13 +132,12 @@ services:
       dockerfile: Dockerfile
     environment:
       PORT: 9004
-      # SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget
-      # SPRING_DATASOURCE_USERNAME: postgres
-      # SPRING_DATASOURCE_PASSWORD: postgres
-      # RABBITMQ_HOST: rabbitmq
-      # RABBITMQ_PORT: 5672
-      # CONSUL_HOST: consul
-      # CONSUL_PORT 8500
+      SPRING_APPLICATION_NAME: budget-service
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
     depends_on:
       db: { condition: service_healthy }
       rabbitmq-dev: { condition: service_healthy }
@@ -160,10 +156,17 @@ services:
       dockerfile: Dockerfile
     environment:
       PORT: 8080
+      SERVER_PORT: 8080
+      SPRING_APPLICATION_NAME: gateway-service
+      SPRING_WEB_RESOURCES_STATIC_LOCATIONS: file:/app/static/
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
       CATALOG_URL: http://catalog:9001
       BASKET_URL: http://basket:9002
       PRICING_URL: http://pricing:9003
       BUDGET_URL: http://budget:9004
+    volumes:
+      - ../frontend/dist:/app/static:ro
     depends_on:
       catalog: { condition: service_healthy }
       basket: { condition: service_healthy }
