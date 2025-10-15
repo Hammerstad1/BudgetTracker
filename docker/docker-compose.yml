@@ -59,7 +59,9 @@ services:
       context: ../backend/catalog-service
       dockerfile: Dockerfile
     environment:
-      PORT: 9001
+      SERVER_PORT: 9001
+      MANAGEMENT_SERVER_PORT: 9001
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,mappings
       SPRING_APPLICATION_NAME: catalog-service
       SPRING_CLOUD_CONSUL_HOST: consul
       SPRING_CLOUD_CONSUL_PORT: 8500
