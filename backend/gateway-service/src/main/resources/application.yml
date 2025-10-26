@@ -2,6 +2,11 @@ server:
   port: ${PORT:8080}
 
 spring:
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:app}
+    password: ${SPRING_RABBITMQ_PASSWORD:app}
   application:
     name: gateway-service
   main:
@@ -25,25 +30,25 @@ spring:
           predicates:
             - Path=/api/catalog/**
           filters:
-            - StripPrefix=1
+            - StripPrefix=2
         - id: basket
           uri: ${BASKET_URL:http://localhost:9002}
           predicates:
             - Path=/api/basket/**
           filters:
-            - StripPrefix=1
+            - StripPrefix=2
         - id: pricing
           uri: ${PRICING_URL:http://localhost:9003}
           predicates:
             - Path=/api/pricing/**
           filters:
-            - StripPrefix=1
+            - StripPrefix=2
         - id: budget
           uri: ${BUDGET_URL:http://localhost:9004}
           predicates:
             - Path=/api/budget/**
           filters:
-            - StripPrefix=1
+            - StripPrefix=2
 
 management:
   endpoints:

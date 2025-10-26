@@ -6,6 +6,10 @@ services:
     ports:
       - '5672:5672'
       - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: app
+      RABBITMQ_DEFAULT_PASS: app
+      RABBITMQ_DEFAULT_VHOST: /
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 5s
@@ -19,7 +23,7 @@ services:
     container_name: consul
     ports:
       - '8500:8500'
-    command: 'agent -dev -node=cards -client=0.0.0.0 -log-level=INFO'
+    command: 'agent -dev -node=cards -client=0.0.0.0 -log-level=ERROR'
     healthcheck:
       test: [ "CMD", "consul", "members" ]
       interval: 5s
@@ -59,6 +63,12 @@ services:
       context: ../backend/catalog-service
       dockerfile: Dockerfile
     environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      RABBITMQ_DEFAULT_USER: app
+      RABBITMQ_DEFAULT_PASS: app
+      RABBITMQ_DEFAULT_VHOST: /
+      OFF_API_BASE_URL: https://world.openfoodfacts.org
+      OFF_USER_AGENT: budget-tracker/1.0 lucashammerstad@gmail.com
       SERVER_PORT: 9001
       MANAGEMENT_SERVER_PORT: 9001
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,mappings
@@ -85,6 +95,10 @@ services:
       context: ../backend/basket-service
       dockerfile: Dockerfile
     environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      RABBITMQ_DEFAULT_USER: app
+      RABBITMQ_DEFAULT_PASS: app
+      RABBITMQ_DEFAULT_VHOST: /
       PORT: 9002
       SPRING_APPLICATION_NAME: basket-service
       SPRING_CLOUD_CONSUL_HOST: consul
@@ -109,6 +123,10 @@ services:
       context: ../backend/pricing-service
       dockerfile: Dockerfile
     environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      RABBITMQ_DEFAULT_USER: app
+      RABBITMQ_DEFAULT_PASS: app
+      RABBITMQ_DEFAULT_VHOST: /
       PORT: 9003
       SPRING_APPLICATION_NAME: pricing-service
       SPRING_CLOUD_CONSUL_HOST: consul
@@ -133,6 +151,10 @@ services:
       context: ../backend/budget-service
       dockerfile: Dockerfile
     environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      RABBITMQ_DEFAULT_USER: app
+      RABBITMQ_DEFAULT_PASS: app
+      RABBITMQ_DEFAULT_VHOST: /
       PORT: 9004
       SPRING_APPLICATION_NAME: budget-service
       SPRING_CLOUD_CONSUL_HOST: consul
@@ -157,6 +179,10 @@ services:
       context: ../backend/gateway-service
       dockerfile: Dockerfile
     environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      RABBITMQ_DEFAULT_USER: app
+      RABBITMQ_DEFAULT_PASS: app
+      RABBITMQ_DEFAULT_VHOST: /
       PORT: 8080
       SERVER_PORT: 8080
       SPRING_APPLICATION_NAME: gateway-service
