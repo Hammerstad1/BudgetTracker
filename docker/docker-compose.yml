@@ -78,11 +78,16 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/catalog_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
+      SPRING_CLOUD_CONSUL_DISCOVERY_INSTANCE_ID: "$${spring.application.name}-$${HOSTNAME}"
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEALTH_CHECK_INTERVAL: 10s
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEARTBEAT_ENABLED: true
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEALTH_CHECK_CRITICAL_TIMEOUT: 30s
     depends_on:
       db: { condition: service_healthy }
       rabbitmq-dev: { condition: service_healthy}
       consul-dev: { condition: service_healthy}
-    ports: ["9001:9001"]
+    expose: ["9001"]
     networks: [micro_card]
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:9001/actuator/health"]
@@ -106,11 +111,16 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/basket_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
+      SPRING_CLOUD_CONSUL_DISCOVERY_INSTANCE_ID: "$${spring.application.name}-$${HOSTNAME}"
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEALTH_CHECK_INTERVAL: 10s
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEARTBEAT_ENABLED: true
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEALTH_CHECK_CRITICAL_TIMEOUT: 30s
     depends_on:
       db: { condition: service_healthy }
       rabbitmq-dev: { condition: service_healthy }
       consul-dev: { condition: service_healthy }
-    ports: [ "9002:9002" ]
+    expose: [ "9002" ]
     networks: [ micro_card ]
     healthcheck:
       test: [ "CMD", "wget", "-qO-", "http://localhost:9002/actuator/health" ]
@@ -134,11 +144,16 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/pricing_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
+      SPRING_CLOUD_CONSUL_DISCOVERY_INSTANCE_ID: "$${spring.application.name}-$${HOSTNAME}"
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEALTH_CHECK_INTERVAL: 10s
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEARTBEAT_ENABLED: true
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEALTH_CHECK_CRITICAL_TIMEOUT: 30s
     depends_on:
       db: { condition: service_healthy }
       rabbitmq-dev: { condition: service_healthy }
       consul-dev: { condition: service_healthy }
-    ports: [ "9003:9003" ]
+    expose: [ "9003" ]
     networks: [ micro_card ]
     healthcheck:
       test: [ "CMD", "wget", "-qO-", "http://localhost:9003/actuator/health" ]
@@ -162,11 +177,16 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
+      SPRING_CLOUD_CONSUL_DISCOVERY_INSTANCE_ID: "$${spring.application.name}-$${HOSTNAME}"
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEALTH_CHECK_INTERVAL: 10s
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEARTBEAT_ENABLED: true
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEALTH_CHECK_CRITICAL_TIMEOUT: 30s
     depends_on:
       db: { condition: service_healthy }
       rabbitmq-dev: { condition: service_healthy }
       consul-dev: { condition: service_healthy }
-    ports: [ "9004:9004" ]
+    expose: [ "9004" ]
     networks: [ micro_card ]
     healthcheck:
       test: [ "CMD", "wget", "-qO-", "http://localhost:9004/actuator/health" ]
@@ -189,13 +209,15 @@ services:
       SPRING_WEB_RESOURCES_STATIC_LOCATIONS: file:/app/static/
       SPRING_CLOUD_CONSUL_HOST: consul
       SPRING_CLOUD_CONSUL_PORT: 8500
-      CATALOG_URL: http://catalog:9001
-      BASKET_URL: http://basket:9002
-      PRICING_URL: http://pricing:9003
-      BUDGET_URL: http://budget:9004
+      SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
+      SPRING_CLOUD_CONSUL_DISCOVERY_INSTANCE_ID: "$${spring.application.name}-$${HOSTNAME}"
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEALTH_CHECK_INTERVAL: 10s
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEARTBEAT_ENABLED: true
+      SPRING_CLOUD_CONSUL_DISCOVERY_HEALTH_CHECK_CRITICAL_TIMEOUT: 30s
     volumes:
       - ../frontend/dist:/app/static:ro
     depends_on:
+      consul-dev: { condition: service_healthy }
       catalog: { condition: service_healthy }
       basket: { condition: service_healthy }
       pricing: { condition: service_healthy }

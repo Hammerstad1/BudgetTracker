@@ -1,12 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter , RouterProvider } from "react-router-dom";
-import App from './App.tsx'
+import Home from "./components/Home";
 import BarcodeButton from './components/BarcodeButton';
 import "./style.css";
 
 const router = createBrowserRouter([
-    { path: "/", element: <App /> },
+    { path: "/", element: <Home /> },
     { path: "/scan", element: <BarcodeButton /> },
 ]);
 
