@@ -9,12 +9,20 @@ spring:
     password: ${SPRING_RABBITMQ_PASSWORD:app}
   application:
     name: gateway-service
+  config:
+    import: "optional:consul"
   main:
     web-application-type: reactive
   cloud:
     consul:
       host: ${SPRING_CLOUD_CONSUL_HOST:consul}
       port: ${SPRING_CLOUD_CONSUL_PORT:8500}
+      config:
+        enabled: true
+        prefix: config
+        default-context: application
+        profile-separator: '-'
+        format: YAML
       discovery:
         enabled: true
         register: true
@@ -60,6 +68,14 @@ spring:
           uri: lb://basket-service
           predicates:
             - Path=/api/basket/**
+            - Method=GET,POST,DELETE
+          filters:
+            - StripPrefix=2
+
+        - id: pricing-actuator
+          uri: lb://pricing-service
+          predicates:
+            - Path=/api/pricing/actuator/**
           filters:
             - StripPrefix=2
 
@@ -68,6 +84,13 @@ spring:
           predicates:
             - Path=/api/pricing/**
           filters:
+            - StripPrefix=1
+
+        - id: budget-actuator
+          uri: lb://budget-service
+          predicates:
+            - Path=/api/budget/actuator/**
+          filters:
             - StripPrefix=2
 
         - id: budget
@@ -75,13 +98,15 @@ spring:
           predicates:
             - Path=/api/budget/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
+
+
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway
+        include: health,info,gateway,env,refresh,busrefresh
 
 logging:
   level:

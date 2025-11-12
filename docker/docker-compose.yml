@@ -21,9 +21,19 @@ services:
   consul-dev:
     image: hashicorp/consul:1.19.2
     container_name: consul
+    command: >
+      agent
+      -server
+      -bootstrap-expect=1
+      -ui
+      -client=0.0.0.0
+      -data-dir=/consul/data
+      -node=cards
+      -log-level=ERROR
+    volumes:
+      - consul_data:/consul/data
     ports:
       - '8500:8500'
-    command: 'agent -dev -node=cards -client=0.0.0.0 -log-level=ERROR'
     healthcheck:
       test: [ "CMD", "consul", "members" ]
       interval: 5s
@@ -63,10 +73,26 @@ services:
       context: ../backend/catalog-service
       dockerfile: Dockerfile
     environment:
+      SPRING_APPLICATION_JSON: >
+        {
+          "off": {
+            "base-url": "https://world.openfoodfacts.org",
+            "user-agent": "budget-tracker/1.0 (lucashammerstad@gmail.com)",
+            "timeout": "60s"
+          },
+          "management": {
+            "endpoints": {
+              "web": {
+                "exposure": { "include": "health,info,mappings,env,refresh" }
+              }
+            }
+          }
+        }
       SPRING_RABBITMQ_HOST: rabbitmq
       RABBITMQ_DEFAULT_USER: app
       RABBITMQ_DEFAULT_PASS: app
       RABBITMQ_DEFAULT_VHOST: /
+      OFF_TIMEOUT: 60s
       OFF_API_BASE_URL: https://world.openfoodfacts.org
       OFF_USER_AGENT: budget-tracker/1.0 lucashammerstad@gmail.com
       SERVER_PORT: 9001
@@ -75,6 +101,7 @@ services:
       SPRING_APPLICATION_NAME: catalog-service
       SPRING_CLOUD_CONSUL_HOST: consul
       SPRING_CLOUD_CONSUL_PORT: 8500
+      SPRING_CONFIG_IMPORT: "optional:consul:"
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/catalog_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
@@ -108,6 +135,7 @@ services:
       SPRING_APPLICATION_NAME: basket-service
       SPRING_CLOUD_CONSUL_HOST: consul
       SPRING_CLOUD_CONSUL_PORT: 8500
+      SPRING_CONFIG_IMPORT: "optional:consul:"
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/basket_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
@@ -141,6 +169,7 @@ services:
       SPRING_APPLICATION_NAME: pricing-service
       SPRING_CLOUD_CONSUL_HOST: consul
       SPRING_CLOUD_CONSUL_PORT: 8500
+      SPRING_CONFIG_IMPORT: "optional:consul:"
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/pricing_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
@@ -149,6 +178,7 @@ services:
       SPRING_CLOUD_CONSUL_DISCOVERY_HEALTH_CHECK_INTERVAL: 10s
       SPRING_CLOUD_CONSUL_DISCOVERY_HEARTBEAT_ENABLED: true
       SPRING_CLOUD_CONSUL_DISCOVERY_HEALTH_CHECK_CRITICAL_TIMEOUT: 30s
+      BASKET_BASE_URL: http://basket:9002
     depends_on:
       db: { condition: service_healthy }
       rabbitmq-dev: { condition: service_healthy }
@@ -174,6 +204,7 @@ services:
       SPRING_APPLICATION_NAME: budget-service
       SPRING_CLOUD_CONSUL_HOST: consul
       SPRING_CLOUD_CONSUL_PORT: 8500
+      SPRING_CONFIG_IMPORT: "optional:consul:"
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
@@ -209,6 +240,7 @@ services:
       SPRING_WEB_RESOURCES_STATIC_LOCATIONS: file:/app/static/
       SPRING_CLOUD_CONSUL_HOST: consul
       SPRING_CLOUD_CONSUL_PORT: 8500
+      SPRING_CONFIG_IMPORT: "optional:consul:"
       SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
       SPRING_CLOUD_CONSUL_DISCOVERY_INSTANCE_ID: "$${spring.application.name}-$${HOSTNAME}"
       SPRING_CLOUD_CONSUL_DISCOVERY_HEALTH_CHECK_INTERVAL: 10s
@@ -238,3 +270,4 @@ networks:
 
 volumes:
   pgdata:
+  consul_data:
