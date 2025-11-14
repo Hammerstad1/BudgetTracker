@@ -1,0 +1,9 @@
+BEGIN;
+ALTER TABLE public.product ADD COLUMN IF NOT EXISTS quantity TEXT;
+ALTER TABLE public.product ADD COLUMN IF NOT EXISTS quantity_value NUMERIC;
+ALTER TABLE public.product ADD COLUMN IF NOT EXISTS quantity_unit TEXT;
+ALTER TABLE public.product ADD COLUMN IF NOT EXISTS raw TEXT;
+ALTER TABLE public.product ADD COLUMN IF NOT EXISTS size TEXT;
+ALTER TABLE public.product ADD COLUMN IF NOT EXISTS last_synced_at TIMESTAMPTZ;
+ALTER TABLE public.product ADD COLUMN IF NOT EXISTS image_url TEXT;
+

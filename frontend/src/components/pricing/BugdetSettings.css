@@ -1,0 +1,84 @@
+.budget.settings {
+    background: #fff7df;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 20px auto;
+}
+
+.budget-settings h2 {
+    margin-top: 0;
+    color: #3b8f5a;
+    text-align: center;
+}
+
+.setting-group{
+    margin-bottom: 20px;
+}
+
+.setting-group label{
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.setting-group input [type="number"],
+.setting-group select[type="range"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #e9d5c3;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+.setting.group input[type="range"] {
+    padding: 0;
+}
+
+.setting-group small {
+    display: block;
+    margin-top: 4px;
+    color: #666;
+    font-size: 14px;
+}
+
+.save-btn {
+    width: 100%;
+    padding: 14px;
+    background: #3b8f5a;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.save-btn:hover {
+    background: #2d7045
+}
+
+.success-msg{
+    margin-top: 12px;
+    padding: 12px;
+    background: #d4edda;
+    color: #155724;
+    border-radius: 8px;
+    text-align: center;
+    animation: fadeIn 0.3;
+}
+
+input[Type="number"]::-webkit-inner-spin-button,
+input[Type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+@Keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-100px); }
+    to { opacity: 1; transform: translateY(0); }
+}

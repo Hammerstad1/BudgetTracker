@@ -1,0 +1,44 @@
+spring:
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:rabbitmq}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:app}
+    password: ${SPRING_RABBITMQ_PASSWORD:app}
+  application:
+    name: basket-service
+  config:
+    import: "optional:consul"
+  cloud:
+    consul:
+      host: ${SPRING_CLOUD_CONSUL_HOST:consul}
+      port: ${SPRING_CLOUD_CONSUL_PORT:8500}
+      config:
+        enabled: true
+        prefix: config
+        default-context: application
+        profile-separator: '-'
+        format: YAML
+
+      discovery:
+        enabled: true
+        register: true
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}-${server.port}
+        service-name: ${spring.application.name}
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+        health-check-critical-timeout: 1m
+        deregister: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,env,refresh,busrefresh
+
+server:
+  port: ${PORT:9002}

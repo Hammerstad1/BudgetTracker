@@ -1,0 +1,3 @@
+ALTER TABLE product
+    ADD COLUMN IF NOT EXISTS quantity_value NUMERIC(14,3),
+    ADD COLUMN IF NOT EXISTS quantity_unit TEXT;

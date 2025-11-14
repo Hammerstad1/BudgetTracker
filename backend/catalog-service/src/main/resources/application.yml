@@ -1,0 +1,47 @@
+spring:
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:app}
+    password: ${SPRING_RABBITMQ_PASSWORD:app}
+  application:
+    name: catalog-service
+  config:
+    import: "optional:consul"
+  cloud:
+    consul:
+      host: ${SPRING_CLOUD_CONSUL_HOST:consul}
+      port: ${SPRING_CLOUD_CONSUL_PORT:8500}
+      config:
+        enabled: true
+        prefix: config
+        default-context: application
+        profile-separator: '-'
+        format: YAML
+      discovery:
+        enabled: true
+        register: true
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}-${server.port}
+        service-name: ${spring.application.name}
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+        health-check-critical-timeout: 1m
+        deregister: true
+
+
+
+off:
+  base-url: ${OFF_API_BASE_URL:https://world.openfoodfacts.org}
+  user-agent: ${OFF_USER_AGENT:budget-tracker/1.0 lucashammerstad@gmail.com}
+  timeout: 3s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,mappings,env,refresh,busrefresh
+
+
+server:
+  port: ${PORT:9001}

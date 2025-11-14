@@ -1,0 +1,50 @@
+name: ci
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Build services
+        run: |
+          mvn -q -DskipTests -f backend/catalog-service/pom.xml clean package
+          mvn -q -DskipTests -f backend/basket-service/pom.xml clean package
+          mvn -q -DskipTests -f backend/pricing-service/pom.xml clean package
+          mvn -q -DskipTests -f backend/budget-service/pom.xml clean package
+          mvn -q -DskipTests -f backend/gateway-service/pom.xml clean package
+
+      - name: Build Docker images
+        run: |
+          docker build -t catalog-service:ci backend/catalog-service
+          docker build -t basket-service:ci backend/basket-service
+          docker build -t pricing-service:ci backend/pricing-service
+          docker build -t budget-service:ci backend/budget-service
+          docker build -t gateway-service:ci backend/gateway-service
+          
+
+      - name: Compose smoke test
+        env:
+          COMPOSE_PROJECT_NAME: ci
+        run: |
+          docker compose -f docker/docker-compose.yml up -d
+          bash -c 'for i in {1..60}; do curl -fsS http://localhost:8080/actuator/health && exit 0; sleep 2; done; exit 1'
+          docker compose -f docker/docker-compose.yml down  
+
+      - name: Dump compose state on failure
+        if: failure()
+        run: |
+          docker compose -f docker/docker-compose.yml ps || true
+          docker compose -f docker/docker-compose.yml logs --no-color || true

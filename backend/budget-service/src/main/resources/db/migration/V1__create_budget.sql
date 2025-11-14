@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS budget (
+    id BIGSERIAL PRIMARY KEY,
+    user_id VARCHAR(64) NOT NULL UNIQUE,
+    monthly_budget NUMERIC(19,2) NOT NULL,
+    warning_threshold NUMERIC(5,2) NOT NULL,
+    notification_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+);
