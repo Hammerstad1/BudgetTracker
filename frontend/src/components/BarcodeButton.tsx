@@ -6,6 +6,7 @@ import type { Product } from '../utils/productService';
 import { useNavigate } from 'react-router-dom';
 import { addItem } from './basket/basketApi';
 import { USER_ID, TOAST_DURATION } from '../constants';
+import { BarcodeErrorMapper } from "../utils/barcodeErrorMapper"
 
 
 export default function BarcodeButton() {
@@ -26,9 +27,10 @@ export default function BarcodeButton() {
 
             await addItem({
                 ean: prod.ean,
-                name: prod.displayName || prod.product_name || prod.name || prod.ean,
+                name: prod.name || prod.ean,
                 qty: 1,
                 imageUrl: prod.imageUrl ?? '/placeholder.png',
+                price: prod.price ?? null,
             });
 
             const { total: updatedTotal } = await getTotal(USER_ID).catch(() => ({ total: null }));
@@ -52,26 +54,15 @@ export default function BarcodeButton() {
                 });
             }, TOAST_DURATION);
         } catch (e) {
-            console.error("Scan/Product processing error: ", e);
-
-            let userMessage = "Could not find product or add it to the basket.";
-
-            if (e instanceof Error) {
-
-                if (e.message.includes('{"error": "Failed to retrieve product"')) {
-                    userMessage = `Product with ean ${ean} could not be found.`;
-                } else {
-                    userMessage = `An issue occurred: ${e.message}`;
-                }
-            }
-
-            setScanError(`Error: ${userMessage}. Please try again or add manually`);
+             const userMessage = BarcodeErrorMapper.getProductErrorMessage(e, ean);
+             setScanError(userMessage);
         }
     }
 
     const { videoRef, status, error, reset } = useBarcodeScanner(handleScan);
 
-    const displayError = scanError || error;
+    const friendlyScannerError = BarcodeErrorMapper.getScannerErrorMessage(error);
+    const displayError = scanError || friendlyScannerError;
 
     return (
         <div className="app-bg">
@@ -99,6 +90,11 @@ export default function BarcodeButton() {
                                 cursor: 'pointer',
                                 fontSize: '14px',
                             }}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setScanError(null);
+                                reset();
+                            }}
                         >
                             Retry Scan
                         </button>
@@ -120,26 +116,28 @@ export default function BarcodeButton() {
 
                   {product && status === "done" && (
                       <div className="product-card">
-                          {product.imageUrl && (
-                              <img src={product.imageUrl} alt={product.name} className="product-image"/>
-                          )}
-                          <div className="product-info">
-                              <div className="product-name">{product.name}</div>
-                              {product.brand && <div className="product-brand">{product.brand}</div>}
-                              {typeof product.price === "number" && (
-                                  <div className="product-price">
-                                      {product.price.toFixed(2)}
-                                  </div>
+                          <div className="product-details-row">
+                              {product.imageUrl && (
+                                  <img src={product.imageUrl} alt={product.name} className="product-image"/>
                               )}
-                              {total != null && (
-                                  <div className="product-total">
-                                      Basket total: <strong>{total.toFixed(2)}</strong>
-                                  </div>
-                              )}
-                              <button className="product-cta" onClick={reset}>
-                                  Scan another item
-                              </button>
+                              <div className="product-info">
+                                  <div className="product-name">{product.name}</div>
+                                  {product.brand && <div className="product-brand">{product.brand}</div>}
+                                  {typeof product.price === "number" && (
+                                      <div className="product-price">
+                                          Product price: <strong>{product.price.toFixed(2)} NOK</strong>
+                                      </div>
+                                  )}
+                                  {total != null && (
+                                      <div className="product-total">
+                                          Basket total: <strong>{total.toFixed(2)} NOK</strong>
+                                      </div>
+                                  )}
+                              </div>
                           </div>
+                          <button className="product-cta" onClick={reset}>
+                              Scan another item
+                          </button>
                       </div>
                   )}
 

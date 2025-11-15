@@ -6,7 +6,8 @@ public record ProductDto (
         String ean,
         String brand,
         String size,
-        String category
+        String category,
+        String imageUrl
 ){
 
 }

@@ -84,10 +84,9 @@ export function useBarcodeScanner(
     }, [status, lastCode, onScan]);
 
     const reset = () => {
-        setStatus("idle");
         setError(null);
         setLastCode(null);
-        window.location.reload();
+        setStatus("scanning");
     }
 
     return {

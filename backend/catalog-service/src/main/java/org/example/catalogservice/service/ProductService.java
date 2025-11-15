@@ -91,7 +91,8 @@ public class ProductService {
                 p.getEan(),
                 p.getBrand(),
                 p.getSize(),
-                categoryName
+                categoryName,
+                p.getImageUrl()
         );
     }
     
