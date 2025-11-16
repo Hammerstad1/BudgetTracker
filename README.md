@@ -44,8 +44,8 @@ so it should work.
 ### Important information regarding scanning!
 
 When you try and scan a product, sometimes it might not read the barcode correctly, so when you get an error message saying "Could not find the barcode: Barcode Number", 
-it will contain a different number of the barcode then the one I have provided with in the word file, you can see these numbers under the barcode.
-If this happens, please try again, it should work. With the delivery of the exam, I will put a word file that contains various barcodes which you can try to scan.
+it will contain a different number of the barcode then the one I have provided with in the reflection's document word file, you can see these numbers under the barcode.
+If this happens, please try again, it should work. With the delivery of the exam, I will put the barcodes with my reflection's document word file that contains various barcodes which you can try to scan.
 You can try and scan whatever food products you can find within your area, which should work for the most part from what I have tested,
 but I am not going to promise that this will work. With the barcodes that I am giving you, I have scanned and tested them, making sure that these do work before delivery. 
 
