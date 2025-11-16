@@ -42,13 +42,6 @@ services:
     networks:
       - micro_card
 
-  #  consul-importer:
-  #    image: consul-importer:1.19.2
-  #    depends_on:
-  #      - consul-dev
-  #    networks:
-  #      - micro_card
-
   db:
     image: postgres:16
     environment:

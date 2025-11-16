@@ -123,7 +123,7 @@ button, .cta { font-weight: 700; }
 
 :root { --row-bg-shift: 16px; }
 
-/* The row where the total price get's calculated */
+/* The row where the total price gets calculated */
 .price-row {
     display: grid;
     grid-template-columns: auto 1fr;

@@ -1,6 +1,7 @@
 package org.example.budgetservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.budgetservice.config.BudgetConfig;
 import org.example.budgetservice.entity.Budget;
 import lombok.extern.slf4j.Slf4j;
 import org.example.budgetservice.model.BudgetDto;
@@ -22,6 +23,7 @@ public class BudgetService {
 
     private final BudgetRepository budgetRepository;
     private final RabbitTemplate rabbitTemplate;
+    private final BudgetConfig budgetConfig;
 
     public Optional<Budget> findBudget(String userId) {
         return budgetRepository.findByUserId(userId);
@@ -41,7 +43,7 @@ public class BudgetService {
         Budget b = new Budget();
         b.setUserId(userId);
         b.setMonthlyBudget(BigDecimal.valueOf(2000));
-        b.setWarningThreshold(BigDecimal.valueOf(0.8));
+        b.setWarningThreshold(budgetConfig.getWarningThresholdAsDecimal());
         b.setNotificationEnabled(true);
         b.setCurrentSpent(BigDecimal.ZERO);
         return b;
