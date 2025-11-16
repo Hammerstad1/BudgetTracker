@@ -20,7 +20,7 @@ public class BudgetConfig {
     @PostConstruct
     public void loadConfig() {
 
-        String url = "http://localhost:8500/ui/dc1/kv/config/budget-service/warningThreshold/?raw=true";
+        String url = "http://consul:8500/v1/kv/config/budget-service/warningThreshold?raw=true";
 
         try {
             String response = restTemplate.getForObject(url, String.class);

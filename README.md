@@ -17,7 +17,13 @@ This project is intended to run with docker, I can't promise that it will run wi
 
 Sometimes when the application services start before RabbitMQ/PostgreSQL/Consul are fully ready, so their 
 initial connection attempt may fail. This can leave the system in a bad state until you restart the affected services. 
-So if this happens, please try and build again. 
+So if this happens, please try and build again.
+
+There is also a possibility that when you build the project using "docker compose up --build", it might fail due service start up timing.
+Which is an expected behaviour. Please run "docker compose up --build" the second time if this happens where it will succeed without any issues. 
+
+
+
 
 ### When everything has been built correctly, you should be able to access the following: 
  - Gateway: http://localhost:8080
